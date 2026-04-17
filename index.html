@@ -1,413 +1,1172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junaid's Pendulum Wave</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #000;
-            overflow: hidden;
-            font-family: 'Orbitron', sans-serif;
-        }
-        
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-        
-        .header {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 100;
-        }
-        
-        .header h1 {
-            color: #00f0ff;
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-        }
-        
-        .attribution {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            color: #ffd700;
-            font-size: 0.7rem;
-            z-index: 100;
-            border: 1px solid #ffd700;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,10,20,0.9);
-            border: 1px solid #00f0ff;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 100;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .control-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .control-item label {
-            color: #7a9bb5;
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .control-item span {
-            color: #00f0ff;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-        
-        input[type="range"] {
-            width: 80px;
-            cursor: pointer;
-        }
-        
-        button {
-            background: transparent;
-            border: 2px solid #00f0ff;
-            color: #00f0ff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-        
-        button:hover {
-            background: #00f0ff;
-            color: #000;
-        }
-        
-        button.playing {
-            border-color: #ff00ff;
-            color: #ff00ff;
-        }
-        
-        button.playing:hover {
-            background: #ff00ff;
-            color: #000;
-        }
-        
-        .stats {
-            position: fixed;
-            top: 80px;
-            right: 15px;
-            background: rgba(0,10,20,0.9);
-            border: 1px solid #00f0ff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            z-index: 100;
-        }
-        
-        .stats div {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 3px 0;
-        }
-        
-        .stats label {
-            color: #7a9bb5;
-            font-size: 0.6rem;
-        }
-        
-        .stats span {
-            color: #00f0ff;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        
-        .sync-bar {
-            width: 100%;
-            height: 5px;
-            background: #222;
-            margin-top: 8px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .sync-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff00ff, #00f0ff, #00ff88);
-            width: 0%;
-            transition: width 0.1s;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Royal JD Pendulum Wave | Created by Junaid Shaik</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #030712;
+      --bg2: #071224;
+      --panel: rgba(7, 14, 26, 0.8);
+      --line: rgba(108, 201, 255, 0.16);
+      --text: #f3f8ff;
+      --muted: #88a0be;
+      --accent: #63e4ff;
+      --accent2: #8e7dff;
+      --accent3: #ffc46b;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI Variable Display", "Segoe UI", Bahnschrift, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(99, 228, 255, 0.1), transparent 18%),
+        radial-gradient(circle at 82% 16%, rgba(142, 125, 255, 0.1), transparent 20%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+    }
+
+    body { overflow-x: hidden; }
+
+    #backdrop {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(1240px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 18px 0 24px;
+    }
+
+    .topbar, .hero, .stats, .stage, .controls {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      border-radius: 999px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #d6f7ff 55%, var(--accent3));
+      color: #04101c;
+      font-weight: 800;
+    }
+
+    .brand strong, .brand span {
+      display: block;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 0.83rem;
+    }
+
+    .hero-wrap {
+      display: grid;
+      grid-template-columns: 1.45fr 0.95fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero, .stats, .stage, .controls {
+      border-radius: 28px;
+    }
+
+    .hero {
+      padding: 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin: 0 0 16px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid rgba(99, 228, 255, 0.18);
+      background: rgba(99, 228, 255, 0.07);
+    }
+
+    h1, h2, p { margin: 0; }
+    h1 {
+      font-size: clamp(2.6rem, 5vw, 5.4rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+      margin-bottom: 16px;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 60ch;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .hero-tile {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .hero-tile span, .hero-tile strong { display: block; }
+    .hero-tile span {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+
+    .stats {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stat span, .stat strong {
+      display: block;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .stat strong {
+      font-size: clamp(1.06rem, 2vw, 1.65rem);
+      letter-spacing: -0.03em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.08fr) minmax(320px, 0.92fr);
+      gap: 18px;
+    }
+
+    .stage {
+      padding: 18px;
+      min-height: 72vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stage-head span, .stage-head strong { display: block; }
+    .stage-head span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-top: 4px;
+    }
+
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(142,125,255,0.08);
+      border: 1px solid rgba(142,125,255,0.2);
+      color: #d4ceff;
+      font-size: 0.82rem;
+    }
+
+    #scene {
+      width: 100%;
+      height: 100%;
+      min-height: 62vh;
+      display: block;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0)),
+        radial-gradient(circle at center, rgba(99,228,255,0.04), transparent 44%);
+    }
+
+    .overlay {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .overlay-card {
+      padding: 13px 15px;
+      border-radius: 16px;
+      background: rgba(4,10,20,0.56);
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .overlay-card span, .overlay-card strong { display: block; }
+    .overlay-card span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .controls {
+      padding: 22px;
+    }
+
+    .controls p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    .btn {
+      min-height: 48px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), #d9f7ff);
+      color: #04111d;
+      font-weight: 800;
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .control {
+      display: block;
+      padding: 14px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .control:first-of-type { border-top: 0; }
+
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    output { color: var(--accent3); }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      outline: none;
+    }
+
+    .meter, .note {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .meter {
+      background: rgba(142,125,255,0.08);
+      border: 1px solid rgba(142,125,255,0.16);
+    }
+
+    .meter-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .meter-bar {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .meter-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      transition: width 120ms linear;
+    }
+
+    .note {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .footer {
+      padding: 20px 10px 0;
+      text-align: center;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-wrap, .layout { grid-template-columns: 1fr; }
+      .hero-grid, .stats, .overlay { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .app { width: min(100vw - 18px, 100%); }
+      .topbar { border-radius: 24px; flex-direction: column; align-items: flex-start; }
+      .hero, .controls { padding: 18px; }
+      .stage { padding: 12px; }
+      .button-row { grid-template-columns: 1fr; }
+      .overlay { left: 20px; right: 20px; bottom: 20px; }
+      .stage-head { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
+  <canvas id="backdrop" aria-hidden="true"></canvas>
 
-    <canvas id="canvas"></canvas>
-    
-    <div class="header">
-        <h1>PENDULUM WAVE</h1>
-    </div>
-    
-    <div class="attribution">Created by Junaid Shaik</div>
-    
-    <div class="stats">
-        <div><label>Time:</label><span id="timeDisplay">0.0s</span></div>
-        <div><label>Bounces:</label><span id="bounceDisplay">0</span></div>
-        <div><label>Sync:</label><span id="syncDisplay">0%</span></div>
-        <div class="sync-bar"><div class="sync-bar-fill" id="syncBar"></div></div>
-    </div>
-    
-    <div class="controls">
-        <div class="control-item">
-            <label>Count</label>
-            <input type="range" id="countSlider" min="10" max="40" value="25">
-            <span id="countDisplay">25</span>
+  <main class="app">
+    <section class="topbar">
+      <div class="brand">
+        <div class="mark">JD</div>
+        <div>
+          <strong>Royal JD Pendulum Wave</strong>
+          <span>Interactive harmonic synchronization by Junaid Shaik</span>
         </div>
-        <div class="control-item">
-            <label>Speed</label>
-            <input type="range" id="speedSlider" min="1" max="10" value="4">
-            <span id="speedDisplay">4x</span>
-        </div>
-        <div class="control-item">
-            <label>Volume</label>
-            <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.3">
-            <span id="volDisplay">30%</span>
-        </div>
-        <button id="playBtn">▶ PLAY</button>
-        <button id="resetBtn">↺ RESET</button>
-    </div>
+      </div>
+      <div class="pill-row">
+        <span class="pill">Futuristic UI</span>
+        <span class="pill">Pendulum visualization</span>
+        <span class="pill">Harmonic motion audio</span>
+      </div>
+    </section>
 
-    <script>
-        // CANVAS SETUP
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // UI ELEMENTS
-        const playBtn = document.getElementById('playBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const countSlider = document.getElementById('countSlider');
-        const speedSlider = document.getElementById('speedSlider');
-        const volSlider = document.getElementById('volSlider');
-        
-        const countDisplay = document.getElementById('countDisplay');
-        const speedDisplay = document.getElementById('speedDisplay');
-        const volDisplay = document.getElementById('volDisplay');
-        const timeDisplay = document.getElementById('timeDisplay');
-        const bounceDisplay = document.getElementById('bounceDisplay');
-        const syncDisplay = document.getElementById('syncDisplay');
-        const syncBar = document.getElementById('syncBar');
-        
-        // STATE
-        let pendulums = [];
-        let isPlaying = false;
-        let time = 0;
-        let bounceCount = 0;
-        let settings = { count: 25, speed: 4, volume: 0.3 };
-        
-        // COLORS
-        const colors = ['#00f0ff','#00d4ff','#00b8ff','#009cff','#0080ff','#ff00ff','#ff00e0','#ff00c0','#ff00a0','#ff0080','#00ff88','#00ff66','#88ff00','#ccff00','#ffdd00','#ff8800','#ff4400','#ff0044','#00ffee','#00ddff','#66ffff'];
-        
-        // AUDIO
-        let audioCtx = null;
-        
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+    <section class="hero-wrap">
+      <section class="hero">
+        <p class="eyebrow">AI Motion Instrument</p>
+        <h1>Pendulum wave hypnosis</h1>
+        <p>
+          This website visualizes pendulum wave synchronization with a futuristic interface and browser audio.
+          Pendulums begin aligned, separate into wave patterns, then return to synchronization while generating
+          harmonic center-crossing pulses and impact accents.
+        </p>
+        <div class="hero-grid">
+          <div class="hero-tile">
+            <span>Purpose</span>
+            <strong>Make synchronization physics feel immersive and easy to understand.</strong>
+          </div>
+          <div class="hero-tile">
+            <span>Visuals</span>
+            <strong>Clean robotic UI with a subtle hypnotic background grid.</strong>
+          </div>
+          <div class="hero-tile">
+            <span>Audio</span>
+            <strong>Motion pulses and close-impact tones driven by pendulum movement.</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats">
+        <article class="stat">
+          <span>Reset Cycle</span>
+          <strong id="cycleStat">18.0 s</strong>
+        </article>
+        <article class="stat">
+          <span>Time To Sync</span>
+          <strong id="countdownStat">18.0 s</strong>
+        </article>
+        <article class="stat">
+          <span>Pattern State</span>
+          <strong id="stateStat">Ready</strong>
+        </article>
+        <article class="stat">
+          <span>Motion Speed</span>
+          <strong id="motionStat">0.00 rad/s</strong>
+        </article>
+        <article class="stat">
+          <span>Audio Energy</span>
+          <strong id="energyStat">0%</strong>
+        </article>
+        <article class="stat">
+          <span>Events</span>
+          <strong id="eventStat">0 / s</strong>
+        </article>
+      </section>
+    </section>
+
+    <section class="layout">
+      <section class="stage">
+        <div class="stage-head">
+          <div>
+            <strong>Live pendulum stage</strong>
+            <span>The pendulums should always be visible here. If this area is blank, the wrong file is deployed.</span>
+          </div>
+          <div class="badge" id="modeBadge">Harmonic bounce</div>
+        </div>
+        <canvas id="scene"></canvas>
+        <div class="overlay">
+          <div class="overlay-card">
+            <span>Nearest spacing</span>
+            <strong id="spacingOverlay">0 px</strong>
+          </div>
+          <div class="overlay-card">
+            <span>Audio mode</span>
+            <strong id="audioOverlay">Armed</strong>
+          </div>
+          <div class="overlay-card">
+            <span>Pulse field</span>
+            <strong id="pulseOverlay">Quiet</strong>
+          </div>
+        </div>
+      </section>
+
+      <aside class="controls">
+        <h2>Controls</h2>
+        <p>Press start once to unlock sound. Sliders update the animation live.</p>
+
+        <div class="button-row">
+          <button id="toggleButton" class="btn btn-primary" type="button">Start Motion</button>
+          <button id="resetButton" class="btn btn-secondary" type="button">Reset</button>
+        </div>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Pendulums</span>
+            <output id="countOut">18</output>
+          </div>
+          <input id="countRange" type="range" min="8" max="28" value="18">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Amplitude</span>
+            <output id="ampOut">0.72 rad</output>
+          </div>
+          <input id="ampRange" type="range" min="20" max="95" value="72">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Speed</span>
+            <output id="speedOut">1.00x</output>
+          </div>
+          <input id="speedRange" type="range" min="25" max="220" value="100">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Return period</span>
+            <output id="cycleOut">18.0 s</output>
+          </div>
+          <input id="cycleRange" type="range" min="10" max="32" step="0.5" value="18">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Volume</span>
+            <output id="volumeOut">80%</output>
+          </div>
+          <input id="volumeRange" type="range" min="0" max="100" value="80">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Impact sensitivity</span>
+            <output id="impactOut">1.00x</output>
+          </div>
+          <input id="impactRange" type="range" min="50" max="180" value="100">
+        </label>
+
+        <label class="control">
+          <div class="control-row">
+            <span>Audio style</span>
+            <output id="styleOut">Harmonic bounce</output>
+          </div>
+          <select id="styleSelect">
+            <option value="bounce">Harmonic bounce</option>
+            <option value="glass">Glass resonance</option>
+            <option value="wood">Wooden ticks</option>
+            <option value="ambient">Cinematic ambient</option>
+          </select>
+        </label>
+
+        <section class="meter">
+          <div class="meter-head">
+            <strong>Sound engine</strong>
+            <span id="engineStat">Armed</span>
+          </div>
+          <div class="meter-bar">
+            <div class="meter-fill" id="meterFill"></div>
+          </div>
+        </section>
+
+        <section class="note">
+          <p id="styleDesc">Harmonic bounce: each pendulum triggers a short harmonic pulse near its center crossing.</p>
+        </section>
+      </aside>
+    </section>
+
+    <div class="footer">Created by Junaid Shaik</div>
+  </main>
+
+  <script>
+    const backdrop = document.getElementById("backdrop");
+    const backdropCtx = backdrop.getContext("2d");
+    const scene = document.getElementById("scene");
+    const ctx = scene.getContext("2d");
+
+    const controls = {
+      count: document.getElementById("countRange"),
+      amp: document.getElementById("ampRange"),
+      speed: document.getElementById("speedRange"),
+      cycle: document.getElementById("cycleRange"),
+      volume: document.getElementById("volumeRange"),
+      impact: document.getElementById("impactRange"),
+      style: document.getElementById("styleSelect"),
+      toggle: document.getElementById("toggleButton"),
+      reset: document.getElementById("resetButton"),
+    };
+
+    const ui = {
+      count: document.getElementById("countOut"),
+      amp: document.getElementById("ampOut"),
+      speed: document.getElementById("speedOut"),
+      cycle: document.getElementById("cycleOut"),
+      volume: document.getElementById("volumeOut"),
+      impact: document.getElementById("impactOut"),
+      style: document.getElementById("styleOut"),
+      cycleStat: document.getElementById("cycleStat"),
+      countdownStat: document.getElementById("countdownStat"),
+      stateStat: document.getElementById("stateStat"),
+      motionStat: document.getElementById("motionStat"),
+      energyStat: document.getElementById("energyStat"),
+      eventStat: document.getElementById("eventStat"),
+      spacingOverlay: document.getElementById("spacingOverlay"),
+      audioOverlay: document.getElementById("audioOverlay"),
+      pulseOverlay: document.getElementById("pulseOverlay"),
+      modeBadge: document.getElementById("modeBadge"),
+      engineStat: document.getElementById("engineStat"),
+      meterFill: document.getElementById("meterFill"),
+      styleDesc: document.getElementById("styleDesc"),
+    };
+
+    const styles = {
+      bounce: { label: "Harmonic bounce", desc: "Harmonic bounce: each pendulum triggers a short harmonic pulse near its center crossing.", wave: "sine", collision: "triangle", brightness: 2200, echo: 0.08, motionDecay: 0.11, impactDecay: 0.18 },
+      glass: { label: "Glass resonance", desc: "Glass resonance: brighter resonance with shinier cluster accents.", wave: "glass", collision: "glass", brightness: 3400, echo: 0.15, motionDecay: 0.14, impactDecay: 0.32 },
+      wood: { label: "Wooden ticks", desc: "Wooden ticks: drier pulses with shorter, more mechanical attacks.", wave: "wood", collision: "triangle", brightness: 1600, echo: 0.03, motionDecay: 0.08, impactDecay: 0.12 },
+      ambient: { label: "Cinematic ambient", desc: "Cinematic ambient: softer pulses with wider harmonic bloom.", wave: "air", collision: "glass", brightness: 2800, echo: 0.22, motionDecay: 0.18, impactDecay: 0.42 },
+    };
+
+    const sim = {
+      gravity: 9.81,
+      baseOscillations: 42,
+      running: false,
+      elapsed: 0,
+      lastFrame: performance.now(),
+      pendulums: [],
+      minSpacing: 0,
+      eventCounter: 0,
+      eventRate: 0,
+      eventWindowStart: performance.now(),
+      audioEnergy: 0,
+    };
+
+    let audioContext;
+    let masterGain;
+    let masterFilter;
+    let echoGain;
+    let ambientGain;
+    let glassWave;
+    let woodWave;
+    let airWave;
+
+    function preset() {
+      return styles[controls.style.value] || styles.bounce;
+    }
+
+    function createWave(context, harmonics) {
+      const real = new Float32Array(harmonics.length + 1);
+      const imag = new Float32Array(harmonics.length + 1);
+      harmonics.forEach((value, index) => {
+        imag[index + 1] = value;
+      });
+      return context.createPeriodicWave(real, imag);
+    }
+
+    function applyWave(osc, name) {
+      if (name === "glass") osc.setPeriodicWave(glassWave);
+      else if (name === "wood") osc.setPeriodicWave(woodWave);
+      else if (name === "air") osc.setPeriodicWave(airWave);
+      else osc.type = name;
+    }
+
+    function ensureAudio() {
+      if (audioContext) return audioContext;
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      audioContext = new AudioContextClass();
+      masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.18;
+      masterFilter = audioContext.createBiquadFilter();
+      masterFilter.type = "lowpass";
+      masterFilter.frequency.value = preset().brightness;
+      masterFilter.Q.value = 0.4;
+      masterGain.connect(masterFilter);
+      masterFilter.connect(audioContext.destination);
+      const delay = audioContext.createDelay(0.4);
+      delay.delayTime.value = 0.16;
+      const feedback = audioContext.createGain();
+      feedback.gain.value = 0.18;
+      echoGain = audioContext.createGain();
+      echoGain.gain.value = preset().echo;
+      echoGain.connect(delay);
+      delay.connect(feedback);
+      feedback.connect(delay);
+      delay.connect(masterGain);
+      ambientGain = audioContext.createGain();
+      ambientGain.gain.value = 0.0001;
+      ambientGain.connect(masterGain);
+      glassWave = createWave(audioContext, [1, 0.5, 0.22, 0.1, 0.05]);
+      woodWave = createWave(audioContext, [1, 0.14, 0.03, 0.01]);
+      airWave = createWave(audioContext, [1, 0.42, 0.2, 0.08, 0.03]);
+      const tones = [92, 138, 207];
+      tones.forEach((freq, index) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        applyWave(osc, index === 0 ? "air" : "sine");
+        osc.frequency.value = freq;
+        gain.gain.value = 0.04;
+        osc.connect(gain);
+        gain.connect(ambientGain);
+        osc.start();
+      });
+      return audioContext;
+    }
+
+    async function unlockAudio() {
+      const context = ensureAudio();
+      if (context && context.state === "suspended") {
+        await context.resume();
+      }
+    }
+
+    function volumeValue() {
+      return Number(controls.volume.value) / 100;
+    }
+
+    function speedValue() {
+      return Number(controls.speed.value) / 100;
+    }
+
+    function harmonicFrequency(index) {
+      let frequency = 55 * (index + 1);
+      while (frequency < 170) frequency *= 2;
+      while (frequency > 1000) frequency /= 2;
+      return frequency;
+    }
+
+    function updateUI() {
+      const amplitude = Number(controls.amp.value) / 100;
+      ui.count.textContent = controls.count.value;
+      ui.amp.textContent = `${amplitude.toFixed(2)} rad`;
+      ui.speed.textContent = `${speedValue().toFixed(2)}x`;
+      ui.cycle.textContent = `${Number(controls.cycle.value).toFixed(1)} s`;
+      ui.volume.textContent = `${controls.volume.value}%`;
+      ui.impact.textContent = `${(Number(controls.impact.value) / 100).toFixed(2)}x`;
+      ui.style.textContent = preset().label;
+      ui.styleDesc.textContent = preset().desc;
+      ui.modeBadge.textContent = preset().label;
+      ui.cycleStat.textContent = `${Number(controls.cycle.value).toFixed(1)} s`;
+      if (masterFilter && echoGain && audioContext) {
+        masterFilter.frequency.setValueAtTime(preset().brightness, audioContext.currentTime);
+        echoGain.gain.setValueAtTime(preset().echo, audioContext.currentTime);
+      }
+    }
+
+    function rebuildPendulums() {
+      const count = Number(controls.count.value);
+      const amplitude = Number(controls.amp.value) / 100;
+      const cycle = Number(controls.cycle.value);
+      const shortestPeriod = cycle / (sim.baseOscillations + count - 1);
+      const longestPeriod = cycle / sim.baseOscillations;
+      const shortestLength = sim.gravity * (shortestPeriod / (2 * Math.PI)) ** 2;
+      const longestLength = sim.gravity * (longestPeriod / (2 * Math.PI)) ** 2;
+      sim.pendulums = Array.from({ length: count }, (_, index) => {
+        const period = cycle / (sim.baseOscillations + index);
+        const lengthMeters = sim.gravity * (period / (2 * Math.PI)) ** 2;
+        const normalized = (lengthMeters - shortestLength) / (longestLength - shortestLength || 1);
+        return {
+          amplitude,
+          omega: (2 * Math.PI) / period,
+          normalized,
+          theta: 0,
+          prevTheta: 0,
+          bobX: 0,
+          bobY: 0,
+          lastPulseAt: -1,
+          lastImpactAt: -1,
+          frequency: harmonicFrequency(index),
+        };
+      });
+      updateUI();
+    }
+
+    function resizeCanvases() {
+      const ratio = window.devicePixelRatio || 1;
+      const bounds = scene.getBoundingClientRect();
+      scene.width = Math.floor(bounds.width * ratio);
+      scene.height = Math.floor(bounds.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      backdrop.width = Math.floor(window.innerWidth * ratio);
+      backdrop.height = Math.floor(window.innerHeight * ratio);
+      backdropCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    function drawBackdrop(timeMs) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      backdropCtx.clearRect(0, 0, width, height);
+      backdropCtx.strokeStyle = "rgba(99,228,255,0.06)";
+      backdropCtx.lineWidth = 1;
+      const step = 42;
+      for (let x = -step; x < width + step; x += step) {
+        backdropCtx.beginPath();
+        backdropCtx.moveTo(x + Math.sin(timeMs * 0.00022 + x * 0.008) * 7, 0);
+        backdropCtx.lineTo(x - Math.sin(timeMs * 0.00022 + x * 0.008) * 7, height);
+        backdropCtx.stroke();
+      }
+      for (let y = -step; y < height + step; y += step) {
+        backdropCtx.beginPath();
+        backdropCtx.moveTo(0, y + Math.cos(timeMs * 0.00018 + y * 0.008) * 7);
+        backdropCtx.lineTo(width, y - Math.cos(timeMs * 0.00018 + y * 0.008) * 7);
+        backdropCtx.stroke();
+      }
+    }
+
+    function drawStage(timeSeconds) {
+      const width = scene.clientWidth;
+      const height = scene.clientHeight;
+      const left = width * 0.06;
+      const right = width * 0.94;
+      const topY = height * 0.12;
+      const usableWidth = right - left;
+      const bobRadius = Math.max(7, Math.min(13, usableWidth / (sim.pendulums.length * 3.2)));
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.lineWidth = 1;
+      for (let y = height * 0.2; y < height; y += height * 0.12) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(left - 16, topY);
+      ctx.lineTo(right + 16, topY);
+      ctx.strokeStyle = "rgba(220,236,255,0.24)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      sim.minSpacing = Number.POSITIVE_INFINITY;
+      sim.pendulums.forEach((pendulum, index) => {
+        const anchorX = left + (usableWidth * index) / Math.max(sim.pendulums.length - 1, 1);
+        const length = height * (0.35 + pendulum.normalized * 0.42);
+        pendulum.prevTheta = pendulum.theta;
+        pendulum.theta = pendulum.amplitude * Math.cos(pendulum.omega * timeSeconds);
+        pendulum.bobX = anchorX + Math.sin(pendulum.theta) * length;
+        pendulum.bobY = topY + Math.cos(pendulum.theta) * length;
+        const glow = Math.min(1, Math.abs(Math.sin(pendulum.omega * timeSeconds)) + 0.15);
+        ctx.beginPath();
+        ctx.moveTo(anchorX, topY);
+        ctx.lineTo(pendulum.bobX, pendulum.bobY);
+        ctx.strokeStyle = `rgba(159,220,255,${0.28 + glow * 0.28})`;
+        ctx.lineWidth = 1.25 + glow;
+        ctx.stroke();
+        const gradient = ctx.createRadialGradient(pendulum.bobX - 2, pendulum.bobY - 2, 2, pendulum.bobX, pendulum.bobY, bobRadius * 1.9);
+        gradient.addColorStop(0, "rgba(255,247,220,0.98)");
+        gradient.addColorStop(0.5, "rgba(99,228,255,0.96)");
+        gradient.addColorStop(1, "rgba(142,125,255,0.18)");
+        ctx.beginPath();
+        ctx.arc(pendulum.bobX, pendulum.bobY, bobRadius, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = "rgba(99,228,255,0.32)";
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        if (index > 0) {
+          const prev = sim.pendulums[index - 1];
+          const dx = pendulum.bobX - prev.bobX;
+          const dy = pendulum.bobY - prev.bobY;
+          sim.minSpacing = Math.min(sim.minSpacing, Math.sqrt(dx * dx + dy * dy));
         }
-        
-        function playSound(freq, vol) {
-            if (!audioCtx || vol === 0) return;
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            
-            const now = audioCtx.currentTime;
-            gain.gain.setValueAtTime(vol * settings.volume * 0.5, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 0.3);
+      });
+      if (!Number.isFinite(sim.minSpacing)) sim.minSpacing = 0;
+    }
+
+    function avgAngularSpeed(timeSeconds) {
+      if (!sim.running || sim.pendulums.length === 0) return 0;
+      const total = sim.pendulums.reduce((sum, pendulum) => {
+        return sum + Math.abs(pendulum.amplitude * pendulum.omega * Math.sin(pendulum.omega * timeSeconds));
+      }, 0);
+      return total / sim.pendulums.length;
+    }
+
+    function noiseBurst(startAt, duration, level, brightness) {
+      const context = ensureAudio();
+      if (!context || context.state !== "running" || level <= 0.0001) return;
+      const frames = Math.max(1, Math.floor(context.sampleRate * duration));
+      const buffer = context.createBuffer(1, frames, context.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < frames; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / frames);
+      const src = context.createBufferSource();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      src.buffer = buffer;
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(brightness, startAt);
+      filter.Q.value = 0.8;
+      gain.gain.setValueAtTime(0.0001, startAt);
+      gain.gain.exponentialRampToValueAtTime(level, startAt + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+      if (echoGain) gain.connect(echoGain);
+      src.start(startAt);
+      src.stop(startAt + duration + 0.01);
+    }
+
+    function pulseSound(pendulum, direction) {
+      const context = ensureAudio();
+      if (!context || context.state !== "running") return;
+      const now = context.currentTime;
+      const style = preset();
+      const osc = context.createOscillator();
+      const overtone = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      applyWave(osc, style.wave);
+      overtone.type = "sine";
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(style.brightness, now);
+      filter.Q.value = style.wave === "wood" ? 1.1 : 0.7;
+      const level = (0.014 + avgAngularSpeed(sim.elapsed) * 0.02) * volumeValue();
+      osc.frequency.setValueAtTime(pendulum.frequency + direction * 4, now);
+      osc.frequency.exponentialRampToValueAtTime(pendulum.frequency * 0.994, now + style.motionDecay);
+      overtone.frequency.setValueAtTime(pendulum.frequency * 2, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(level, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + style.motionDecay);
+      osc.connect(filter);
+      overtone.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+      if (echoGain) gain.connect(echoGain);
+      osc.start(now);
+      overtone.start(now);
+      osc.stop(now + style.motionDecay + 0.03);
+      overtone.stop(now + style.motionDecay + 0.03);
+      noiseBurst(now, Math.max(0.03, style.motionDecay * 0.45), level * 0.18, style.brightness);
+    }
+
+    function impactSound(pendulum, spacing) {
+      const context = ensureAudio();
+      if (!context || context.state !== "running") return;
+      const now = context.currentTime;
+      const style = preset();
+      const closeness = 1 - Math.min(1, spacing / Math.max(10, 24 * (Number(controls.impact.value) / 100)));
+      const osc = context.createOscillator();
+      const shimmer = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      applyWave(osc, style.collision);
+      shimmer.type = "sine";
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(style.brightness + closeness * 1500, now);
+      filter.Q.value = style.collision === "triangle" ? 0.7 : 1.1;
+      const base = pendulum.frequency * (1.5 + closeness * 0.4);
+      const level = (0.018 + closeness * 0.06) * volumeValue();
+      osc.frequency.setValueAtTime(base, now);
+      osc.frequency.exponentialRampToValueAtTime(base * 1.06, now + 0.07);
+      shimmer.frequency.setValueAtTime(base * 2.8, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(level, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(level * 0.3, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + style.impactDecay);
+      osc.connect(filter);
+      shimmer.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+      if (echoGain) gain.connect(echoGain);
+      osc.start(now);
+      shimmer.start(now);
+      osc.stop(now + style.impactDecay + 0.03);
+      shimmer.stop(now + Math.max(0.14, style.impactDecay * 0.7));
+      noiseBurst(now, Math.max(0.03, style.impactDecay * 0.2), level * 0.28, style.brightness + 1200);
+    }
+
+    function startCue() {
+      const context = ensureAudio();
+      if (!context || context.state !== "running") return;
+      const start = context.currentTime + 0.02;
+      for (let i = 0; i < 5; i += 1) {
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        applyWave(osc, "air");
+        const when = start + i * 0.04;
+        const freq = 210 + i * 34;
+        osc.frequency.setValueAtTime(freq, when);
+        osc.frequency.linearRampToValueAtTime(freq * 1.05, when + 0.1);
+        gain.gain.setValueAtTime(0.0001, when);
+        gain.gain.exponentialRampToValueAtTime(0.03 + volumeValue() * 0.03, when + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.12);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(when);
+        osc.stop(when + 0.14);
+      }
+    }
+
+    function pauseCue() {
+      const context = ensureAudio();
+      if (!context || context.state !== "running") return;
+      const osc = context.createOscillator();
+      const gain = context.createGain();
+      osc.type = "triangle";
+      const now = context.currentTime;
+      osc.frequency.setValueAtTime(260, now);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.16);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.035, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+
+    function scanEvents(nowMs) {
+      if (!sim.running) return;
+      const impactThreshold = Math.max(10, 24 * (Number(controls.impact.value) / 100));
+      sim.pendulums.forEach((pendulum) => {
+        const crossed = Math.sign(pendulum.prevTheta) !== Math.sign(pendulum.theta) && Math.abs(pendulum.theta) < 0.18;
+        if (crossed && nowMs - pendulum.lastPulseAt > Math.max(80, 210 - speedValue() * 50)) {
+          pulseSound(pendulum, pendulum.theta >= 0 ? 1 : -1);
+          pendulum.lastPulseAt = nowMs;
+          sim.eventCounter += 1;
         }
-        
-        // RESIZE
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            createPendulums();
+      });
+      for (let i = 0; i < sim.pendulums.length - 1; i += 1) {
+        const a = sim.pendulums[i];
+        const b = sim.pendulums[i + 1];
+        const dx = a.bobX - b.bobX;
+        const dy = a.bobY - b.bobY;
+        const spacing = Math.sqrt(dx * dx + dy * dy);
+        if (spacing <= impactThreshold && nowMs - a.lastImpactAt > Math.max(90, 220 - speedValue() * 40)) {
+          impactSound(a, spacing);
+          a.lastImpactAt = nowMs;
+          b.lastImpactAt = nowMs;
+          sim.eventCounter += 1;
         }
-        
-        // CREATE PENDULUMS
-        function createPendulums() {
-            pendulums = [];
-            const count = settings.count;
-            
-            for (let i = 0; i < count; i++) {
-                const x = (canvas.width / (count + 1)) * (i + 1);
-                const y = 60;
-                const len = ((canvas.height - 120) / count) * (i + 1);
-                const freq = 1 + (i * 0.003);
-                const noteFreq = 200 + (i * 20);
-                
-                pendulums.push({
-                    x: x,
-                    y: y,
-                    len: len,
-                    freq: freq,
-                    note: noteFreq,
-                    color: colors[i % colors.length],
-                    angle: 0,
-                    prevAngle: 0
-                });
-            }
-        }
-        
-        // UPDATE
-        function update() {
-            // Draw background
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            if (isPlaying) {
-                time += settings.speed * 0.05;
-            }
-            
-            bounceCount = 0;
-            let syncedCount = 0;
-            
-            pendulums.forEach((p, i) => {
-                p.prevAngle = p.angle;
-                p.angle = 0.5 * Math.sin(time * p.freq);
-                
-                // Check for crossing center
-                const crossed = (p.prevAngle < 0 && p.angle >= 0) || (p.prevAngle > 0 && p.angle <= 0);
-                if (crossed && isPlaying && time > 0.5) {
-                    bounceCount++;
-                    if (i % 2 === 0) {
-                        playSound(p.note, 0.5);
-                    }
-                }
-                
-                if (Math.abs(p.angle) < 0.05) syncedCount++;
-                
-                // Calculate bob position
-                const bobX = p.x + p.len * Math.sin(p.angle);
-                const bobY = p.y + p.len * Math.cos(p.angle);
-                
-                // Draw string
-                ctx.beginPath();
-                ctx.strokeStyle = p.color;
-                ctx.lineWidth = 2;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = p.color;
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(bobX, bobY);
-                ctx.stroke();
-                
-                // Draw bob
-                ctx.beginPath();
-                ctx.fillStyle = p.color;
-                ctx.arc(bobX, bobY, 5, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw pivot
-                ctx.beginPath();
-                ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            
-            ctx.shadowBlur = 0;
-            
-            // Update stats
-            timeDisplay.textContent = (time / 10).toFixed(1) + 's';
-            bounceDisplay.textContent = bounceCount;
-            
-            const syncPercent = Math.round((syncedCount / pendulums.length) * 100);
-            syncDisplay.textContent = syncPercent + '%';
-            syncBar.style.width = syncPercent + '%';
-            
-            requestAnimationFrame(update);
-        }
-        
-        // EVENT LISTENERS
-        playBtn.addEventListener('click', () => {
-            initAudio();
-            isPlaying = !isPlaying;
-            
-            if (isPlaying) {
-                playBtn.textContent = '⏸ PAUSE';
-                playBtn.classList.add('playing');
-                playSound(440, 0.3);
-            } else {
-                playBtn.textContent = '▶ PLAY';
-                playBtn.classList.remove('playing');
-            }
-        });
-        
-        resetBtn.addEventListener('click', () => {
-            time = 0;
-            createPendulums();
-            if (isPlaying) playSound(440, 0.3);
-        });
-        
-        countSlider.addEventListener('input', (e) => {
-            settings.count = parseInt(e.target.value);
-            countDisplay.textContent = settings.count;
-            createPendulums();
-        });
-        
-        speedSlider.addEventListener('input', (e) => {
-            settings.speed = parseInt(e.target.value);
-            speedDisplay.textContent = settings.speed + 'x';
-        });
-        
-        volSlider.addEventListener('input', (e) => {
-            settings.volume = parseFloat(e.target.value);
-            volDisplay.textContent = Math.round(settings.volume * 100) + '%';
-        });
-        
-        window.addEventListener('resize', resize);
-        
-        // START
-        resize();
-        update();
-    </script>
+      }
+    }
+
+    function updateAudioEnergy() {
+      const motion = avgAngularSpeed(sim.elapsed);
+      const speedFactor = Math.min(1, motion / 2.2);
+      const eventFactor = Math.min(1, sim.eventRate / 12);
+      sim.audioEnergy = sim.running ? Math.min(1, speedFactor * 0.5 + eventFactor * 0.5) * volumeValue() : 0;
+      if (ambientGain && audioContext && audioContext.state === "running") {
+        ambientGain.gain.cancelScheduledValues(audioContext.currentTime);
+        ambientGain.gain.linearRampToValueAtTime(sim.running ? 0.003 + sim.audioEnergy * 0.018 : 0.0001, audioContext.currentTime + 0.12);
+        masterFilter.frequency.cancelScheduledValues(audioContext.currentTime);
+        masterFilter.frequency.linearRampToValueAtTime(preset().brightness * 0.82 + sim.audioEnergy * 2000, audioContext.currentTime + 0.12);
+        echoGain.gain.cancelScheduledValues(audioContext.currentTime);
+        echoGain.gain.linearRampToValueAtTime(preset().echo * (0.6 + sim.audioEnergy), audioContext.currentTime + 0.12);
+      }
+    }
+
+    function updateRate(nowMs) {
+      if (nowMs - sim.eventWindowStart >= 1000) {
+        sim.eventRate = sim.eventCounter;
+        sim.eventCounter = 0;
+        sim.eventWindowStart = nowMs;
+      }
+    }
+
+    function stateLabel(progress) {
+      if (!sim.running && sim.elapsed === 0) return "Ready";
+      if (!sim.running) return "Paused";
+      if (progress < 0.08 || progress > 0.92) return "Aligned";
+      if (progress < 0.18 || progress > 0.82) return "Fanning out";
+      if (progress < 0.36 || progress > 0.64) return "Wave forming";
+      return "Most dephased";
+    }
+
+    function updateReadout() {
+      const cycle = Number(controls.cycle.value);
+      const wrapped = sim.elapsed % cycle;
+      const progress = wrapped / cycle;
+      const remaining = cycle - wrapped || cycle;
+      const motion = avgAngularSpeed(sim.elapsed);
+      ui.countdownStat.textContent = `${remaining.toFixed(1)} s`;
+      ui.stateStat.textContent = stateLabel(progress);
+      ui.motionStat.textContent = `${motion.toFixed(2)} rad/s`;
+      ui.energyStat.textContent = `${Math.round(sim.audioEnergy * 100)}%`;
+      ui.eventStat.textContent = `${sim.eventRate.toFixed(0)} / s`;
+      ui.spacingOverlay.textContent = `${sim.minSpacing.toFixed(0)} px`;
+      ui.audioOverlay.textContent = sim.running ? preset().label : "Armed";
+      ui.pulseOverlay.textContent = sim.audioEnergy > 0.65 ? "Dense harmonic field" : sim.audioEnergy > 0.25 ? "Active pulse stream" : "Quiet";
+      ui.engineStat.textContent = sim.running ? "Live" : "Armed";
+      ui.meterFill.style.width = `${Math.round(sim.audioEnergy * 100)}%`;
+    }
+
+    async function toggleMotion() {
+      await unlockAudio();
+      sim.running = !sim.running;
+      controls.toggle.textContent = sim.running ? "Pause Motion" : "Start Motion";
+      if (sim.running) startCue();
+      else pauseCue();
+    }
+
+    function resetSimulation() {
+      sim.running = false;
+      sim.elapsed = 0;
+      sim.eventCounter = 0;
+      sim.eventRate = 0;
+      sim.audioEnergy = 0;
+      sim.eventWindowStart = performance.now();
+      controls.toggle.textContent = "Start Motion";
+      rebuildPendulums();
+      updateReadout();
+    }
+
+    function animate(nowMs) {
+      const delta = (nowMs - sim.lastFrame) / 1000;
+      sim.lastFrame = nowMs;
+      drawBackdrop(nowMs);
+      if (sim.running) sim.elapsed += delta * speedValue();
+      drawStage(sim.elapsed);
+      scanEvents(nowMs);
+      updateRate(nowMs);
+      updateAudioEnergy();
+      updateReadout();
+      requestAnimationFrame(animate);
+    }
+
+    function bindLive(control) {
+      control.addEventListener("input", rebuildPendulums);
+      control.addEventListener("change", rebuildPendulums);
+    }
+
+    Object.values(controls).forEach((control) => {
+      if (control !== controls.toggle && control !== controls.reset) bindLive(control);
+    });
+
+    controls.toggle.addEventListener("click", toggleMotion);
+    controls.reset.addEventListener("click", resetSimulation);
+    window.addEventListener("resize", resizeCanvases);
+
+    rebuildPendulums();
+    resizeCanvases();
+    updateReadout();
+    requestAnimationFrame(animate);
+  </script>
 </body>
 </html>
