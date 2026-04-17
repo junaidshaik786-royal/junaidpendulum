@@ -4,451 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Junaid's Pendulum Wave</title>
-    <meta name="author" content="Junaid Shaik">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
+            background: #000;
             overflow: hidden;
-            background: #020208;
-            font-family: 'Rajdhani', sans-serif;
-            color: #e0f4ff;
+            font-family: 'Orbitron', sans-serif;
         }
-
-        #bgCanvas {
+        
+        canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.6;
         }
-
-        #mainCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* HEADER */
+        
         .header {
             position: fixed;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
             z-index: 100;
         }
-
+        
         .header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            font-weight: 900;
-            letter-spacing: 6px;
             color: #00f0ff;
-            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #00f0ff;
-            text-transform: uppercase;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
         }
-
-        .header .subtitle {
-            font-size: 0.8rem;
-            color: #7a9bb5;
-            letter-spacing: 3px;
-            margin-top: 5px;
-        }
-
-        /* ATTRIBUTION */
+        
         .attribution {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
+            top: 15px;
+            left: 15px;
             color: #ffd700;
-            z-index: 100;
-            padding: 8px 15px;
-            background: rgba(8, 12, 20, 0.92);
-            border: 1px solid #ffd700;
-            border-radius: 4px;
-        }
-
-        /* STATS PANEL */
-        .stats-panel {
-            position: fixed;
-            top: 100px;
-            right: 30px;
-            background: rgba(8, 12, 20, 0.92);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 8px;
-            padding: 15px 20px;
-            z-index: 100;
-            min-width: 180px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
-        }
-
-        .stat-row:last-child {
-            border-bottom: none;
-        }
-
-        .stat-label {
             font-size: 0.7rem;
-            color: #7a9bb5;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #00f0ff;
-            text-shadow: 0 0 8px #00f0ff;
-        }
-
-        .stat-value.gold { color: #ffd700; text-shadow: 0 0 8px #ffd700; }
-        .stat-value.green { color: #00ff88; text-shadow: 0 0 8px #00ff88; }
-        .stat-value.magenta { color: #ff00ff; text-shadow: 0 0 8px #ff00ff; }
-
-        /* SYNC BAR */
-        .sync-container {
-            margin-top: 10px;
-        }
-
-        .sync-bar-bg {
-            width: 100%;
-            height: 8px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-        }
-
-        .sync-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff00ff, #00f0ff, #00ff88);
-            transition: width 0.1s;
-            box-shadow: 0 0 15px #00f0ff;
-        }
-
-        .sync-text {
-            font-size: 0.65rem;
-            text-align: center;
-            margin-top: 5px;
-            color: #7a9bb5;
-        }
-
-        .sync-text.synced {
-            color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
-        }
-
-        /* WAVE VISUALIZER */
-        .wave-viz {
-            position: fixed;
-            bottom: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(8, 12, 20, 0.92);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 8px;
-            padding: 10px;
             z-index: 100;
-        }
-
-        #waveCanvas {
-            display: block;
+            border: 1px solid #ffd700;
+            padding: 5px 10px;
             border-radius: 4px;
         }
-
-        /* CONTROL PANEL */
-        .control-panel {
+        
+        .controls {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(8, 12, 20, 0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 12px;
-            padding: 20px 30px;
+            background: rgba(0,10,20,0.9);
+            border: 1px solid #00f0ff;
+            padding: 15px 25px;
+            border-radius: 10px;
             z-index: 100;
             display: flex;
-            gap: 25px;
+            gap: 20px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: center;
-            max-width: 95%;
         }
-
-        .control-section {
+        
+        .control-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
-
-        .control-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        
+        .control-item label {
             color: #7a9bb5;
-        }
-
-        .control-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #00f0ff;
-        }
-
-        /* SLIDERS */
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100px;
-            height: 6px;
-            background: linear-gradient(90deg, #00f0ff, #ff00ff);
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #020208;
-            border: 2px solid #00f0ff;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 15px #00f0ff;
-        }
-
-        /* BUTTONS */
-        .btn {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 12px 25px;
-            border: 2px solid #00f0ff;
-            background: transparent;
-            color: #00f0ff;
-            border-radius: 6px;
-            cursor: pointer;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+        }
+        
+        .control-item span {
+            color: #00f0ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        input[type="range"] {
+            width: 80px;
+            cursor: pointer;
+        }
+        
+        button {
+            background: transparent;
+            border: 2px solid #00f0ff;
+            color: #00f0ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
             transition: all 0.3s;
         }
-
-        .btn:hover {
-            background: rgba(0, 240, 255, 0.15);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
-            text-shadow: 0 0 10px #00f0ff;
+        
+        button:hover {
+            background: #00f0ff;
+            color: #000;
         }
-
-        .btn.playing {
+        
+        button.playing {
             border-color: #ff00ff;
             color: #ff00ff;
         }
-
-        .btn.playing:hover {
-            background: rgba(255, 0, 255, 0.15);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.4);
+        
+        button.playing:hover {
+            background: #ff00ff;
+            color: #000;
         }
-
-        .audio-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            padding: 0;
-        }
-
-        /* INSTRUCTIONS */
-        .instructions {
+        
+        .stats {
             position: fixed;
-            bottom: 200px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            color: #7a9bb5;
-            opacity: 0.6;
-            z-index: 50;
+            top: 80px;
+            right: 15px;
+            background: rgba(0,10,20,0.9);
+            border: 1px solid #00f0ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            z-index: 100;
         }
-
-        @media (max-width: 900px) {
-            .control-panel {
-                flex-wrap: wrap;
-                justify-content: center;
-                width: 90%;
-                padding: 15px;
-                gap: 15px;
-            }
-            
-            .stats-panel {
-                top: auto;
-                bottom: 360px;
-                right: 10px;
-                min-width: 140px;
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 1.2rem;
-                letter-spacing: 3px;
-            }
-            
-            .wave-viz {
-                bottom: 200px;
-            }
+        
+        .stats div {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 3px 0;
+        }
+        
+        .stats label {
+            color: #7a9bb5;
+            font-size: 0.6rem;
+        }
+        
+        .stats span {
+            color: #00f0ff;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        .sync-bar {
+            width: 100%;
+            height: 5px;
+            background: #222;
+            margin-top: 8px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .sync-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff00ff, #00f0ff, #00ff88);
+            width: 0%;
+            transition: width 0.1s;
         }
     </style>
 </head>
 <body>
 
-    <canvas id="bgCanvas"></canvas>
-    <canvas id="mainCanvas"></canvas>
-
+    <canvas id="canvas"></canvas>
+    
     <div class="header">
-        <h1>Pendulum Wave</h1>
-        <div class="subtitle">Harmonic Synchronization System</div>
+        <h1>PENDULUM WAVE</h1>
     </div>
-
-    <div class="attribution">
-        ⚡ Created by Junaid Shaik
+    
+    <div class="attribution">Created by Junaid Shaik</div>
+    
+    <div class="stats">
+        <div><label>Time:</label><span id="timeDisplay">0.0s</span></div>
+        <div><label>Bounces:</label><span id="bounceDisplay">0</span></div>
+        <div><label>Sync:</label><span id="syncDisplay">0%</span></div>
+        <div class="sync-bar"><div class="sync-bar-fill" id="syncBar"></div></div>
     </div>
-
-    <div class="stats-panel">
-        <div class="stat-row">
-            <span class="stat-label">Time</span>
-            <span class="stat-value" id="timeVal">0.00s</span>
+    
+    <div class="controls">
+        <div class="control-item">
+            <label>Count</label>
+            <input type="range" id="countSlider" min="10" max="40" value="25">
+            <span id="countDisplay">25</span>
         </div>
-        <div class="stat-row">
-            <span class="stat-label">Bounces/s</span>
-            <span class="stat-value gold" id="bounceVal">0</span>
+        <div class="control-item">
+            <label>Speed</label>
+            <input type="range" id="speedSlider" min="1" max="10" value="4">
+            <span id="speedDisplay">4x</span>
         </div>
-        <div class="stat-row">
-            <span class="stat-label">Notes/s</span>
-            <span class="stat-value magenta" id="notesVal">0</span>
+        <div class="control-item">
+            <label>Volume</label>
+            <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.3">
+            <span id="volDisplay">30%</span>
         </div>
-        <div class="stat-row">
-            <span class="stat-label">Status</span>
-            <span class="stat-value green" id="statusVal">Ready</span>
-        </div>
-        <div class="sync-container">
-            <div class="sync-bar-bg">
-                <div class="sync-bar-fill" id="syncBar"></div>
-            </div>
-            <div class="sync-text" id="syncText">0% Synchronized</div>
-        </div>
-    </div>
-
-    <div class="wave-viz">
-        <canvas id="waveCanvas" width="400" height="60"></canvas>
-    </div>
-
-    <div class="instructions">▶ Press PLAY to Start | 🔊 Headphones Recommended</div>
-
-    <div class="control-panel">
-        <div class="control-section">
-            <span class="control-label">Pendulums</span>
-            <input type="range" id="countSlider" min="15" max="50" value="30">
-            <span class="control-value" id="countVal">30</span>
-        </div>
-        <div class="control-section">
-            <span class="control-label">Speed</span>
-            <input type="range" id="speedSlider" min="1" max="10" step="0.5" value="3">
-            <span class="control-value" id="speedVal">3x</span>
-        </div>
-        <div class="control-section">
-            <span class="control-label">Base Note</span>
-            <input type="range" id="noteSlider" min="100" max="500" step="10" value="220">
-            <span class="control-value" id="noteVal">A3</span>
-        </div>
-        <div class="control-section">
-            <span class="control-label">Volume</span>
-            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.4">
-            <span class="control-value" id="volVal">40%</span>
-        </div>
-        <button class="btn" id="playBtn">▶ Play</button>
-        <button class="btn" id="resetBtn">↺ Reset</button>
-        <button class="btn audio-btn" id="audioBtn">🔊</button>
+        <button id="playBtn">▶ PLAY</button>
+        <button id="resetBtn">↺ RESET</button>
     </div>
 
     <script>
-        // PENDULUM WAVE - Created by Junaid Shaik
+        // CANVAS SETUP
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
         
-        const mainCanvas = document.getElementById('mainCanvas');
-        const ctx = mainCanvas.getContext('2d');
-        const bgCanvas = document.getElementById('bgCanvas');
-        const bgCtx = bgCanvas.getContext('2d');
-        const waveCanvas = document.getElementById('waveCanvas');
-        const waveCtx = waveCanvas.getContext('2d');
-
-        const timeVal = document.getElementById('timeVal');
-        const bounceVal = document.getElementById('bounceVal');
-        const notesVal = document.getElementById('notesVal');
-        const statusVal = document.getElementById('statusVal');
-        const syncBar = document.getElementById('syncBar');
-        const syncText = document.getElementById('syncText');
-
-        const countSlider = document.getElementById('countSlider');
-        const speedSlider = document.getElementById('speedSlider');
-        const noteSlider = document.getElementById('noteSlider');
-        const volSlider = document.getElementById('volSlider');
+        // UI ELEMENTS
         const playBtn = document.getElementById('playBtn');
         const resetBtn = document.getElementById('resetBtn');
-        const audioBtn = document.getElementById('audioBtn');
-
-        const countVal = document.getElementById('countVal');
-        const speedVal = document.getElementById('speedVal');
-        const noteVal = document.getElementById('noteVal');
-        const volVal = document.getElementById('volVal');
-
-        // AUDIO ENGINE
-        let audioCtx = null;
-        let isPlaying = false;
-        let isAudioOn = true;
-        let volume = 0.4;
-        let baseNote = 220;
-        let bounceCount = 0;
-        let noteCount = 0;
-        let wasSynced = false;
-
-        // SIMULATION
+        const countSlider = document.getElementById('countSlider');
+        const speedSlider = document.getElementById('speedSlider');
+        const volSlider = document.getElementById('volSlider');
+        
+        const countDisplay = document.getElementById('countDisplay');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const volDisplay = document.getElementById('volDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const bounceDisplay = document.getElementById('bounceDisplay');
+        const syncDisplay = document.getElementById('syncDisplay');
+        const syncBar = document.getElementById('syncBar');
+        
+        // STATE
         let pendulums = [];
+        let isPlaying = false;
         let time = 0;
-        let settings = { count: 30, speed: 3 };
-        let waveHistory = [];
-        let particles = [];
-
-        const colors = [
-            '#00f0ff', '#00d4ff', '#00b8ff', '#009cff', '#0080ff',
-            '#ff00ff', '#ff00e0', '#ff00c0', '#ff00a0', '#ff0080',
-            '#00ff88', '#00ff66', '#88ff00', '#ccff00', '#ffdd00',
-            '#ff8800', '#ff4400', '#ff0044', '#ff0066', '#00ffee',
-            '#00ddff', '#66ffff', '#aaffff', '#ff66ff', '#ff99ff',
-            '#cc99ff', '#9966ff', '#6600ff', '#9900ff', '#cc00ff'
-        ];
-
+        let bounceCount = 0;
+        let settings = { count: 25, speed: 4, volume: 0.3 };
+        
+        // COLORS
+        const colors = ['#00f0ff','#00d4ff','#00b8ff','#009cff','#0080ff','#ff00ff','#ff00e0','#ff00c0','#ff00a0','#ff0080','#00ff88','#00ff66','#88ff00','#ccff00','#ffdd00','#ff8800','#ff4400','#ff0044','#00ffee','#00ddff','#66ffff'];
+        
+        // AUDIO
+        let audioCtx = null;
+        
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -457,372 +245,168 @@
                 audioCtx.resume();
             }
         }
-
-        function freqToNote(freq) {
-            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-            const noteNum = 12 * (Math.log2(freq / 440)) + 49;
-            const note = Math.round(noteNum);
-            const octave = Math.floor(note / 12) - 1;
-            return notes[note % 12] + octave;
-        }
-
-        function playChime(freq, velocity = 1) {
-            if (!isAudioOn || !audioCtx) return;
-
+        
+        function playSound(freq, vol) {
+            if (!audioCtx || vol === 0) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            
             const now = audioCtx.currentTime;
-            const osc1 = audioCtx.createOscillator();
-            const osc2 = audioCtx.createOscillator();
-            const osc3 = audioCtx.createOscillator();
+            gain.gain.setValueAtTime(vol * settings.volume * 0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
             
-            const gain1 = audioCtx.createGain();
-            const gain2 = audioCtx.createGain();
-            const gain3 = audioCtx.createGain();
-            const masterGain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
             
-            osc1.frequency.value = freq;
-            osc2.frequency.value = freq * 2.756;
-            osc3.frequency.value = freq * 5.404;
-            
-            osc1.type = 'sine';
-            osc2.type = 'triangle';
-            osc3.type = 'sine';
-            
-            const decayTime = 0.3 + (0.5 / (freq / 200));
-            
-            gain1.gain.setValueAtTime(0, now);
-            gain1.gain.linearRampToValueAtTime(volume * velocity * 0.6, now + 0.005);
-            gain1.gain.exponentialRampToValueAtTime(0.001, now + decayTime);
-            
-            gain2.gain.setValueAtTime(0, now);
-            gain2.gain.linearRampToValueAtTime(volume * velocity * 0.3, now + 0.005);
-            gain2.gain.exponentialRampToValueAtTime(0.001, now + decayTime * 0.5);
-            
-            gain3.gain.setValueAtTime(0, now);
-            gain3.gain.linearRampToValueAtTime(volume * velocity * 0.15, now + 0.005);
-            gain3.gain.exponentialRampToValueAtTime(0.001, now + decayTime * 0.3);
-            
-            masterGain.gain.value = 0.7;
-            
-            osc1.connect(gain1);
-            osc2.connect(gain2);
-            osc3.connect(gain3);
-            gain1.connect(masterGain);
-            gain2.connect(masterGain);
-            gain3.connect(masterGain);
-            masterGain.connect(audioCtx.destination);
-            
-            osc1.start(now);
-            osc2.start(now);
-            osc3.start(now);
-            osc1.stop(now + decayTime + 0.1);
-            osc2.stop(now + decayTime + 0.1);
-            osc3.stop(now + decayTime + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.3);
         }
-
-        function playStartChord() {
-            if (!isAudioOn || !audioCtx) return;
-            [baseNote, baseNote * 1.25, baseNote * 1.5, baseNote * 2].forEach((freq, i) => {
-                setTimeout(() => playChime(freq, 0.5), i * 80);
-            });
-        }
-
-        function playSyncChord() {
-            if (!isAudioOn || !audioCtx) return;
-            [baseNote * 2, baseNote * 2.5, baseNote * 3, baseNote * 4].forEach((freq, i) => {
-                setTimeout(() => playChime(freq, 0.7), i * 100);
-            });
-        }
-
+        
+        // RESIZE
         function resize() {
-            mainCanvas.width = window.innerWidth;
-            mainCanvas.height = window.innerHeight;
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-            initPendulums();
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            createPendulums();
         }
-
-        function initPendulums() {
+        
+        // CREATE PENDULUMS
+        function createPendulums() {
             pendulums = [];
-            waveHistory = [];
+            const count = settings.count;
             
-            for (let i = 0; i < settings.count; i++) {
-                const pivotX = (mainCanvas.width / (settings.count + 1)) * (i + 1);
-                const pivotY = 80;
-                const lenRatio = (mainCanvas.height - 160) / settings.count;
-                const length = (i + 1) * lenRatio;
-                
-                const frequency = 1 + (i * 0.002);
-                const noteRatio = Math.pow(2, i / 12);
-                const noteFreq = baseNote * noteRatio;
+            for (let i = 0; i < count; i++) {
+                const x = (canvas.width / (count + 1)) * (i + 1);
+                const y = 60;
+                const len = ((canvas.height - 120) / count) * (i + 1);
+                const freq = 1 + (i * 0.003);
+                const noteFreq = 200 + (i * 20);
                 
                 pendulums.push({
-                    pivotX, pivotY, length, frequency, noteFreq,
-                    noteName: freqToNote(noteFreq),
-                    amplitude: 0.5,
+                    x: x,
+                    y: y,
+                    len: len,
+                    freq: freq,
+                    note: noteFreq,
                     color: colors[i % colors.length],
-                    currentAngle: 0, prevAngle: 0, id: i
+                    angle: 0,
+                    prevAngle: 0
                 });
             }
         }
-
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 50; i++) {
-                particles.push({
-                    x: Math.random() * bgCanvas.width,
-                    y: Math.random() * bgCanvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    size: Math.random() * 2 + 1,
-                    opacity: Math.random() * 0.3 + 0.1
-                });
-            }
-        }
-
+        
+        // UPDATE
         function update() {
-            if (!isPlaying) {
-                drawBg();
-                draw();
-                drawWave();
-                requestAnimationFrame(update);
-                return;
+            // Draw background
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (isPlaying) {
+                time += settings.speed * 0.05;
             }
-
-            time += settings.speed * 0.05;
+            
             bounceCount = 0;
-            noteCount = 0;
             let syncedCount = 0;
-
-            pendulums.forEach(p => {
-                p.prevAngle = p.currentAngle;
-                p.currentAngle = p.amplitude * Math.sin(time * p.frequency);
+            
+            pendulums.forEach((p, i) => {
+                p.prevAngle = p.angle;
+                p.angle = 0.5 * Math.sin(time * p.freq);
                 
-                const crossedCenter = (p.prevAngle < 0 && p.currentAngle >= 0) || 
-                                    (p.prevAngle > 0 && p.currentAngle <= 0);
-                
-                if (crossedCenter && time > 1) {
+                // Check for crossing center
+                const crossed = (p.prevAngle < 0 && p.angle >= 0) || (p.prevAngle > 0 && p.angle <= 0);
+                if (crossed && isPlaying && time > 0.5) {
                     bounceCount++;
-                    if (p.id % 3 === 0 || syncedCount > pendulums.length * 0.8) {
-                        playChime(p.noteFreq, 0.3 + (p.id / pendulums.length) * 0.7);
-                        noteCount++;
+                    if (i % 2 === 0) {
+                        playSound(p.note, 0.5);
                     }
                 }
                 
-                if (Math.abs(p.currentAngle) < 0.03) syncedCount++;
+                if (Math.abs(p.angle) < 0.05) syncedCount++;
                 
-                p.bobX = p.pivotX + p.length * Math.sin(p.currentAngle);
-                p.bobY = p.pivotY + p.length * Math.cos(p.currentAngle);
-            });
-
-            if (syncedCount === pendulums.length && !wasSynced) {
-                wasSynced = true;
-                playSyncChord();
-                statusVal.textContent = 'SYNCED!';
-            } else if (syncedCount < pendulums.length) {
-                wasSynced = false;
-                statusVal.textContent = 'Running';
-            }
-
-            drawBg();
-            draw();
-            drawWave();
-            updateStats(syncedCount);
-            requestAnimationFrame(update);
-        }
-
-        function drawBg() {
-            const grad = bgCtx.createRadialGradient(
-                bgCanvas.width / 2, bgCanvas.height / 2, 0,
-                bgCanvas.width / 2, bgCanvas.height / 2, bgCanvas.width * 0.7
-            );
-            grad.addColorStop(0, 'rgba(10, 15, 30, 1)');
-            grad.addColorStop(1, 'rgba(2, 2, 8, 1)');
-            bgCtx.fillStyle = grad;
-            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-            bgCtx.strokeStyle = 'rgba(0, 240, 255, 0.03)';
-            const gridSize = 60;
-            
-            for (let x = 0; x < bgCanvas.width; x += gridSize) {
-                bgCtx.beginPath();
-                bgCtx.moveTo(x, 0);
-                bgCtx.lineTo(x, bgCanvas.height);
-                bgCtx.stroke();
-            }
-            for (let y = 0; y < bgCanvas.height; y += gridSize) {
-                bgCtx.beginPath();
-                bgCtx.moveTo(0, y);
-                bgCtx.lineTo(bgCanvas.width, y);
-                bgCtx.stroke();
-            }
-
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0) p.x = bgCanvas.width;
-                if (p.x > bgCanvas.width) p.x = 0;
-                if (p.y < 0) p.y = bgCanvas.height;
-                if (p.y > bgCanvas.height) p.y = 0;
+                // Calculate bob position
+                const bobX = p.x + p.len * Math.sin(p.angle);
+                const bobY = p.y + p.len * Math.cos(p.angle);
                 
-                bgCtx.beginPath();
-                bgCtx.fillStyle = `rgba(0, 240, 255, ${p.opacity})`;
-                bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                bgCtx.fill();
-            });
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-            
-            pendulums.forEach(p => {
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = p.color;
-
-                const grad = ctx.createLinearGradient(p.pivotX, p.pivotY, p.bobX, p.bobY);
-                grad.addColorStop(0, p.color);
-                grad.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
-                
+                // Draw string
                 ctx.beginPath();
-                ctx.strokeStyle = grad;
+                ctx.strokeStyle = p.color;
                 ctx.lineWidth = 2;
-                ctx.moveTo(p.pivotX, p.pivotY);
-                ctx.lineTo(p.bobX, p.bobY);
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = p.color;
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(bobX, bobY);
                 ctx.stroke();
-
-                ctx.beginPath();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-                ctx.arc(p.pivotX, p.pivotY, 5, 0, Math.PI * 2);
-                ctx.fill();
-
+                
+                // Draw bob
                 ctx.beginPath();
                 ctx.fillStyle = p.color;
-                ctx.arc(p.bobX, p.bobY, 5, 0, Math.PI * 2);
+                ctx.arc(bobX, bobY, 5, 0, Math.PI * 2);
                 ctx.fill();
-
-                ctx.globalAlpha = 0.4;
-                ctx.beginPath();
-                ctx.arc(p.bobX, p.bobY, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            });
-
-            ctx.shadowBlur = 0;
-
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-            ctx.setLineDash([5, 10]);
-            ctx.moveTo(50, mainCanvas.height / 2);
-            ctx.lineTo(mainCanvas.width - 50, mainCanvas.height / 2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
-
-        function drawWave() {
-            const w = waveCanvas.width;
-            const h = waveCanvas.height;
-            
-            waveCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            waveCtx.fillRect(0, 0, w, h);
-            
-            waveHistory.push(pendulums.map(p => p.currentAngle));
-            if (waveHistory.length > w) waveHistory.shift();
-
-            waveCtx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
-            waveCtx.beginPath();
-            waveCtx.moveTo(0, h / 2);
-            waveCtx.lineTo(w, h / 2);
-            waveCtx.stroke();
-
-            for (let i = 0; i < Math.min(8, pendulums.length); i++) {
-                const p = pendulums[i];
-                waveCtx.beginPath();
-                waveCtx.strokeStyle = p.color;
-                waveCtx.lineWidth = 1.5;
-                waveCtx.globalAlpha = 0.8;
                 
-                for (let x = 0; x < waveHistory.length; x++) {
-                    const y = h / 2 - (waveHistory[x][i] / 0.5) * (h / 2 - 5);
-                    if (x === 0) waveCtx.moveTo(x, y);
-                    else waveCtx.lineTo(x, y);
-                }
-                waveCtx.stroke();
-            }
-            waveCtx.globalAlpha = 1;
-        }
-
-        function updateStats(syncedCount) {
-            const syncPercent = Math.round((syncedCount / pendulums.length) * 100);
-            timeVal.textContent = (time / 10).toFixed(2) + 's';
-            bounceVal.textContent = bounceCount;
-            notesVal.textContent = noteCount;
-            syncBar.style.width = syncPercent + '%';
-            syncText.textContent = syncPercent + '% Synchronized';
+                // Draw pivot
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
             
-            if (syncPercent === 100) {
-                syncText.textContent = '🎉 SYNCED!';
-                syncText.classList.add('synced');
-            } else {
-                syncText.classList.remove('synced');
-            }
+            ctx.shadowBlur = 0;
+            
+            // Update stats
+            timeDisplay.textContent = (time / 10).toFixed(1) + 's';
+            bounceDisplay.textContent = bounceCount;
+            
+            const syncPercent = Math.round((syncedCount / pendulums.length) * 100);
+            syncDisplay.textContent = syncPercent + '%';
+            syncBar.style.width = syncPercent + '%';
+            
+            requestAnimationFrame(update);
         }
-
+        
         // EVENT LISTENERS
-        countSlider.addEventListener('input', (e) => {
-            settings.count = parseInt(e.target.value);
-            countVal.textContent = settings.count;
-            initPendulums();
-        });
-
-        speedSlider.addEventListener('input', (e) => {
-            settings.speed = parseFloat(e.target.value);
-            speedVal.textContent = settings.speed + 'x';
-        });
-
-        noteSlider.addEventListener('input', (e) => {
-            baseNote = parseInt(e.target.value);
-            noteVal.textContent = freqToNote(baseNote);
-            initPendulums();
-        });
-
-        volSlider.addEventListener('input', (e) => {
-            volume = parseFloat(e.target.value);
-            volVal.textContent = Math.round(volume * 100) + '%';
-        });
-
         playBtn.addEventListener('click', () => {
             initAudio();
             isPlaying = !isPlaying;
+            
             if (isPlaying) {
-                playBtn.textContent = '⏸ Pause';
+                playBtn.textContent = '⏸ PAUSE';
                 playBtn.classList.add('playing');
-                playStartChord();
+                playSound(440, 0.3);
             } else {
-                playBtn.textContent = '▶ Play';
+                playBtn.textContent = '▶ PLAY';
                 playBtn.classList.remove('playing');
             }
         });
-
+        
         resetBtn.addEventListener('click', () => {
             time = 0;
-            waveHistory = [];
-            wasSynced = false;
-            statusVal.textContent = 'Ready';
-            initPendulums();
-            if (isPlaying) playStartChord();
+            createPendulums();
+            if (isPlaying) playSound(440, 0.3);
         });
-
-        audioBtn.addEventListener('click', () => {
-            initAudio();
-            isAudioOn = !isAudioOn;
-            audioBtn.textContent = isAudioOn ? '🔊' : '🔇';
-            audioBtn.classList.toggle('muted', !isAudioOn);
+        
+        countSlider.addEventListener('input', (e) => {
+            settings.count = parseInt(e.target.value);
+            countDisplay.textContent = settings.count;
+            createPendulums();
         });
-
-        window.addEventListener('resize', () => { resize(); initParticles(); });
-
-        // INIT
+        
+        speedSlider.addEventListener('input', (e) => {
+            settings.speed = parseInt(e.target.value);
+            speedDisplay.textContent = settings.speed + 'x';
+        });
+        
+        volSlider.addEventListener('input', (e) => {
+            settings.volume = parseFloat(e.target.value);
+            volDisplay.textContent = Math.round(settings.volume * 100) + '%';
+        });
+        
+        window.addEventListener('resize', resize);
+        
+        // START
         resize();
-        initParticles();
         update();
     </script>
 </body>
